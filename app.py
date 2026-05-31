@@ -12,7 +12,7 @@ load_dotenv()
 
 # ── Initialize Flask ──
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5173"])
+CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5173", "https://smartintern-ai.vercel.app"])
 
 # ── Connect to MongoDB ──
 client = MongoClient(os.getenv('MONGO_URI'))
