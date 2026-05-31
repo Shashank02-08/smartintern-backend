@@ -1,0 +1,402 @@
+[
+    {
+        "id": 1, 
+        "title": "Full Stack Development Internship",
+        "organization": "Nobrokerage.com",
+        "location": "Pune",
+        "stipend": "₹6000 - ₹8000 /month",
+        "duration": "6 months",
+        "skills": "[ HTML, CSS, Bootstrap and JavaScript,MySQL, PHP and CodeIgniter 4/ Laravel ]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=Mjc=&level=MTA="
+    },
+    {
+        "id": 2,
+        "title": "Python Development Internship",
+        "organization": "Jorim Technology Solutions Private Limited",
+        "location": "Chennai",
+        "stipend": "₹8000 - ₹10000 /month",
+        "duration": "6 months",
+        "skills": "[ Python, machine learning]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=MzI=&level=MTA="
+    },
+    {
+        "id": 3,
+        "title": "Software Development internship",
+        "organization": "Aroma Ice Cream",
+        "location": "Remote",
+        "stipend": "₹15000 - ₹20000 /month",
+        "duration": "2 months",
+        "skills": "[ AI ]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=MzQ=&level=MTA="
+    },
+    {
+        "id": 4,
+        "title": "Full Stack Development Internship",
+        "organization": "Meghnad Saha",
+        "location": "Remote",
+        "stipend": "₹5000 - ₹15000 /month",
+        "duration": "6 months",
+        "skills": "[Java, Spring Boot, Hibernate, React.js or Angular, integrating with REST APIs]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=NjA=&level=MTA="
+    },
+    {
+        "id": 5,
+        "title": "C++ PROGRAMMING INTERNSHIP",
+        "organization": "CodeMore",
+        "location": "Pan India, fulltime",
+        "stipend": "Unpaid",
+        "duration": "2 months",
+        "skills": "[ C++ programming language, problem-solving]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=SU5URVJOU0hJUF8xNzgwMTM4MzE5NmExYWMxNGYxYTdhMA=="
+    },
+    {
+        "id": 6,
+        "title": "JAVA PROGRAMMING INTERNSHIP",
+        "organization": "codegeeky",
+        "location": "Pan India",
+        "stipend": "Unpaid",
+        "duration": "2 months",
+        "skills": "[Java concepts, object-oriented programming, application development, database connectivity, API integration]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=SU5URVJOU0hJUF8xNzgwMTM4Mjc3NmExYWMxMjU0NWRkMw=="
+    },
+    {
+        "id": 7,
+        "title": "ARTIFICIAL INTELLIGENCE & MACHINE LEARNING INTERNSHIP",
+        "organization": "codegeeky",
+        "location": "Pan India",
+        "stipend": "Unpaid",
+        "duration": "2 months",
+        "skills": "[AI technologies, machine learning algorithms, Data Science]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=SU5URVJOU0hJUF8xNzgwMTM0MzM1NmExYWIxYmYzOGUzYw=="
+    },
+    {
+        "id": 8,
+        "title": "PYTHON - AI - ML - DATA SCIENCE - GEN-AI -JAVA - WEBSITE DEVELOPMENT INTERNSHIP",
+        "organization": "ROBOKWIK.COM",
+        "location": "Pan India",
+        "stipend": "Unpaid",
+        "duration": "2 months",
+        "skills": "[HTML, CSS, Bootstrap and JavaScript,MySQL,python, AI, ML,Java]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=SU5URVJOU0hJUF8xNzgwMTIxNDAzNmExYTdmM2JkNWM4Mw=="
+    },
+    {
+        "id": 9,
+        "title": "SOFTWARE ENGINEER INTERNSHIP",
+        "organization": "Cothon solutions",
+        "location": "Pan India",
+        "stipend": "₹10000 /month",
+        "duration": "6 Weeks",
+        "skills": "[ Python and Java, HTML, CSS, JavaScript, and frameworks like React or Angular, Django Flask or Spring Boot, MySQL PostgreSQL or MongoDB]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=SU5URVJOU0hJUF8xNzU0NDY2ODA0Njg5MzA5ZjRjNjhjZQ=="
+    },
+    {
+        "id": 10,
+        "title": "Content Writing Internship",
+        "organization": "TickYourList",
+        "location": "Remote",
+        "stipend": "₹1500 - ₹2000 /month",
+        "duration": "3 months",
+        "skills": "[social media marketing, digital marketing, SEO, creative writing, blogging]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=MQ==&level=MTA="
+    },
+    {
+        "id": 11,
+        "title": "Content and Social Media Marketing Internship",
+        "organization": "Valda",
+        "location": "Panchkula,Chandigarh",
+        "stipend": "₹2000 - ₹2001 /month",
+        "duration": "6 months",
+        "skills": "[dynamic Content, Social Media Marketing]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=MTU=&level=MTA="
+    },
+    {
+        "id": 12,
+        "title": "NICSI Internship - Artificial Intelligence",
+        "organization": "National Informatics Centre Services Inc. (NICSI), MeitY",
+        "location": "New Delhi / Remote",
+        "stipend": "Unpaid",
+        "duration": "2-6 months",
+        "skills": "[B.Tech/B.E. (CS/IT/Electronics), MCA, M.Tech, or related fields]",
+        "apply_link": "https://nicsi.nic.in/nicsi/pdfs/internship/Internship_Notification_2026.pdf"
+    },
+    {
+        "id": 13,
+        "title": "Business Development (Sales) Internship",
+        "organization": "Khichad Consultancy",
+        "location": "Sikar",
+        "stipend": "₹6000 - ₹15000 /month",
+        "duration": "3 months",
+        "skills": "[ business development, digital marketing, excel]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=MTE=&level=MTA="  
+    },
+    {
+        "id": 14,
+        "title": "Stock Market Research internship",
+        "organization": "Coinory",
+        "location": "Remote",
+        "stipend": "₹5000 - ₹10000 /month",
+        "duration": "2 months",
+        "skills": "[stock trading, time management, research, analytics, effective communication]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=MTY=&level=MTA=" 
+    },
+    {
+        "id": 15,
+        "title": "Software Development Internship",
+        "organization": "ECUGIE TECHNOLOGIES",
+        "location": "Gurgaon",
+        "stipend": "₹7000 - ₹7500 /month",
+        "duration": "3 months",
+        "skills": "[Java, MySQL]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=MTM=&level=MTA=" 
+    },
+    {
+        "id": 16,
+        "title": "Inside Sales Internship",
+        "organization": "Sarvang Infotech India Limited",
+        "location": "Gurgaon",
+        "stipend": "₹3000 - ₹8000 /month",
+        "duration": "6 months",
+        "skills": "[Communication, active listening, product knowledge, CRM tools, negotiation, customer service, presentation skills, time management, account management]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=MzM=&level=MTA=" 
+    },
+    {
+        "id": 17,
+        "title": "Python Development Internship",
+        "organization": "Jorim Technology Solutions Private Limited",
+        "location": "Chennai",
+        "stipend": "₹8000 - ₹10000 /month",
+        "duration": "6 months",
+        "skills": "[Python, data structures, NumPy, Pandas, Django, Flask, problem-solving]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=MzI=&level=MTA=" 
+    },
+    {
+        "id": 18,
+        "title": "Video Editing/Making Internship",
+        "organization": "LetsTransport",
+        "location": "Bangalore",
+        "stipend": "₹12000 - ₹15000 /month",
+        "duration": "2 months",
+        "skills": "[Creativity, storytelling, video editing software (Premiere Pro, Final Cut, DaVinci Resolve), audio editing, motion graphics, color correction, camera handling, script writing]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=Njg=&level=MTA=" 
+    },
+    {
+        "id": 19,
+        "title": "Human Resources (HR) Internship",
+        "organization": "Pehchaan AI Technologies",
+        "location": "Kolkata",
+        "stipend": "₹8000 - ₹10000 /month",
+        "duration": "6 months",
+        "skills": "[Communication, recruitment, employee relations, HR policies, onboarding, payroll basics, conflict resolution, time management, teamwork, organizational skills, MS Office, confidentiality]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=NDY=&level=MTA=" 
+    },
+    {
+        "id": 20,
+        "title": "Android App Development Internship",
+        "organization": "Nupur G",
+        "location": "Remote",
+        "stipend": "₹11000 lump sum",
+        "duration": "2 months",
+        "skills": "[Java, Kotlin, Android Studio, XML layouts, UI/UX design, APIs, Firebase, SQLite, Git, debugging, problem-solving]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=NDc=&level=MTA=" 
+    },
+    {
+        "id": 21,
+        "title": "WordPress Development Internship",
+        "organization": "Insight Thinkers Agency",
+        "location": "Remote",
+        "stipend": "₹3000 - ₹6000 /month",
+        "duration": "3 months",
+        "skills": "[PHP, WordPress, SEO, JavaScript, CSS, and HTML ]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=NjQ=&level=MTA=" 
+    },
+    {
+        "id": 22,
+        "title": "Graphic Design Internship",
+        "organization": "Framed",
+        "location": "Kolkata",
+        "stipend": "₹15000 - ₹30000 /month",
+        "duration": "4 months",
+        "skills": "[Creativity, Adobe Photoshop, Illustrator, InDesign, Canva, typography, color theory, layout design, branding, visual communication, attention to detail, time management, teamwork]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=Njc=&level=MTA=" 
+    },
+    {
+        "id": 23,
+        "title": "Academic Writing work from home job/internship",
+        "organization": "International Institute Of SDGs & Public Policy Research",
+        "location": "Remote",
+        "stipend": "Unpaid",
+        "duration": "3 months",
+        "skills": "[Research, critical thinking, grammar, editing, citation styles (APA, MLA, Chicago), clarity, originality, paraphrasing, data analysis, report writing ]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=MTUx&level=MTA=" 
+    },
+    {
+        "id": 24,
+        "title": "Videography part time internship",
+        "organization": "Tushar Prakash",
+        "location": "Delhi",
+        "stipend": "₹5000 - ₹16000 /month",
+        "duration": "2 months",
+        "skills": "[Camera handling, lighting, framing, storytelling, video editing, audio recording, Shoot music videos]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=MTAy&level=MTA="
+    },
+    {
+        "id": 25,
+        "title": "Copywriting Internship",
+        "organization": "Ayurveda House Private Limited",
+        "location": "Delhi",
+        "stipend": "₹10000 - ₹12000 /month",
+        "duration": "3 months",
+        "skills": "[Copywriting, Creative Writing, and possess excellent English proficiency]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=MTA4&level=MTA="
+    },
+    {
+        "id": 26,
+        "title": "Psychology part time job/internship",
+        "organization": "Centre For Social And Behaviour Change Communication",
+        "location": "Mumbai",
+        "stipend": "Unpaid",
+        "duration": "3 months",
+        "skills": "[Communication, empathy, counseling basics, research methods, data analysis, observation, report writing, confidentiality, active listening, teamwork, time management]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=MTIy&level=MTA="
+    },
+    {
+        "id": 27,
+        "title": "Business Analyst Internship",
+        "organization": "Nippetals",
+        "location": "Mumbai",
+        "stipend": "₹10000 /month",
+        "duration": "6 months",
+        "skills": "[Analytical thinking, problem-solving, data analysis, SQL, Excel, communication, documentation, requirement gathering, process mapping, presentation skills]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=MTIz&level=MTA="
+    },
+    {
+        "id": 28,
+        "title": "ETHICAL HACKING AND CYBERSECURITY INTERNSHIP",
+        "organization": "codegeeky",
+        "location": "Pan India",
+        "stipend": "Unpaid",
+        "duration": "2 months",
+        "skills": "[Networking, Linux, penetration testing, vulnerability assessment, cryptography, firewalls, IDS/IPS, ethical hacking tools (Metasploit, Nmap, Wireshark), risk analysis, problem-solving]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=SU5URVJOU0hJUF8xNzgwMTQxMzg2NmExYWNkNGE4MjdlMw=="
+    },
+    {
+        "id": 29,
+        "title": "PROMPT ENGINEERING INTERNSHIP",
+        "organization": "CodeMore",
+        "location": "Pan India",
+        "stipend": "Unpaid",
+        "duration": "2 months",
+        "skills": "[Artificial Intelligence tools, Large Language Models (LLMs), and modern AI interaction techniques]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=SU5URVJOU0hJUF8xNzgwMTQxMzQ1NmExYWNkMjEyYzg4ZA=="
+    },
+    {
+        "id": 30,
+        "title": "INTERNSHIP IN JAVA APPLICATIONS",
+        "organization": "SURE Trust",
+        "location": "Remote",
+        "stipend": "Unpaid",
+        "duration": "6 months",
+        "skills": "[Java, OOP, data structures, algorithms, JDBC, SQL, Spring Boot, Hibernate, REST APIs, debugging, Git, problem-solving]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=SU5URVJOU0hJUF8xNzUxNzE1MzcwNjg2OTBlMmE0NDRkMQ=="
+    },
+    {
+        "id": 31,
+        "title": "AI ML INTERNSHIP",
+        "organization": "DOORAWAY TECHNOLOGIES PRIVATE LIMITED",
+        "location": "Patna",
+        "stipend": "₹5000 /month",
+        "duration": "6 months",
+        "skills": "[Python, machine learning, deep learning, TensorFlow, PyTorch, data preprocessing, NumPy, Pandas]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=SU5URVJOU0hJUF8xNzc0OTI0NjczNjljYjMzODExNjI3NQ=="
+    },
+    {
+        "id": 32,
+        "title": "SUMMER INTERNSHIP PROGRAMM2026",
+        "organization": "Beeskilled",
+        "location": "Remote",
+        "stipend": "Unpaid",
+        "duration": "6 Weeks",
+        "skills": "[Python Development, Web Development, Machine Learning, Data Science, Power BI]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=SU5URVJOU0hJUF8xNzgwMjAzMjMxNmExYmJlZGY0NzlhYw=="
+    },
+    {
+        "id": 33,
+        "title": "COLLEGE STUDENT INTERNSHIP",
+        "organization": "CodeMore",
+        "location": "Pan India",
+        "stipend": "Unpaid",
+        "duration": "2 months",
+        "skills": "[technical knowledge, problem-solving ability, communication skills, and professional readiness]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=SU5URVJOU0hJUF8xNzgwMTk1ODM5NmExYmExZmYwMmNlNQ=="
+    },
+    {
+        "id": 34,
+        "title": "FLUTTER APP DEVELOPMENT INTERNSHIP",
+        "organization": "CodeMore",
+        "location": "Pan India",
+        "stipend": "Unpaid",
+        "duration": "2 months",
+        "skills": "[UI development, app functionality, API integration, state management, responsive design, and application deployment]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=SU5URVJOU0hJUF8xNzgwMjE0ODY2NmExYmVjNTIxMjcxOA=="
+    },
+    {
+        "id": 35,
+        "title": "INTERNSHIP IN CYBER SECURITY APPLICATIONS",
+        "organization": "SURE Trust",
+        "location": "Remote",
+        "stipend": "Unpaid",
+        "duration": "6 months",
+        "skills": [],
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=SU5URVJOU0hJUF8xNzUxNzM0OTc3Njg2OTVhYzExN2RkNA=="
+    },
+    {
+        "id": 36,
+        "title": "Blog Writing internship",
+        "organization": "InAmigos Foundation",
+        "location": "Remote",
+        "stipend": "₹2000 - ₹3500 /month",
+        "duration": "2 weeks",
+        "skills": "[Creativity, content writing, SEO, research, grammar, editing, storytelling, WordPress, social media, time management, communication, originality]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=Mw==&level=MTA="
+    },
+    {
+        "id": 37,
+        "title": "QA Testing work from home job/internship",
+        "organization": "AI Certs",
+        "location": "Remote",
+        "stipend": "₹8000 - ₹12000 /month",
+        "duration": "3 months",
+        "skills": "[Perform regression, functional, UI/UX, and exploratory testing]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=Ng==&level=MTA="
+    },
+    {
+        "id": 38,
+        "title": "UI/UX Design Internship",
+        "organization": "BLUECS.IN",
+        "location": "Remote",
+        "stipend": "₹2000 - ₹10000 /month",
+        "duration": "3 months",
+        "skills": "[wireframing, prototyping, Figma, Adobe XD, Sketch, user research, usability testing, interaction design, visual design, responsive design]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=MTEy&level=MTA="
+    },
+    {
+        "id": 39,
+        "title": "Architecture Internship",
+        "organization": "Ansari Architects",
+        "location": "Chennai",
+        "stipend": "₹3000 - ₹5000 /month",
+        "duration": "3 months",
+        "skills": "[Design, AutoCAD, Revit, SketchUp, 3D modeling, drafting, construction knowledge, building codes, visualization]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=OTU=&level=MTA="
+    },
+    {
+        "id": 40,
+        "title": "Fundraising Internship",
+        "organization": "Pawzz Foundation",
+        "location": "Remote",
+        "stipend": "₹1500 - ₹8000 /month",
+        "duration": "1 months",
+        "skills": "[English proficiency, digital marketing skills, and knowledge of economics]",
+        "apply_link": "https://internship.aicte-india.org/internship-details.php?uid=MTM1&level=MTA="
+    }
+]
