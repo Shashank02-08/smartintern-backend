@@ -33,14 +33,14 @@ def extract_skills_from_text(text):
 
 def calculate_match_score(resume_skills, internship_skills):
     if not internship_skills:
-        return 50
+        return 0
 
     resume_lower = [s.lower() for s in resume_skills]
     internship_lower = [s.lower() for s in internship_skills]
 
     matched = 0
     for skill in internship_lower:
-        if any(skill in r or r in skill for r in resume_lower):
+        if any(skill == r for r in resume_lower):
             matched += 1
 
     score = int((matched / len(internship_lower)) * 100)
