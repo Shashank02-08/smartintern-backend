@@ -45,6 +45,7 @@ def verify_token(token):
 # Register
 @app.route('/api/register', methods=['POST'])
 def register():
+    import re
     data = request.json
     name = data.get('name')
     email = data.get('email')
@@ -52,6 +53,15 @@ def register():
 
     if not name or not email or not password:
         return jsonify({'error': 'All fields are required'}), 400
+
+    # Email format validation
+    email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+    if not re.match(email_regex, email):
+        return jsonify({'error': 'Please enter a valid email address'}), 400
+
+    # Password length check
+    if len(password) < 6:
+        return jsonify({'error': 'Password must be at least 6 characters'}), 400
 
     # Check if user already exists
     if users.find_one({'email': email}):
@@ -185,6 +195,52 @@ def update_profile():
     )
 
     return jsonify({'message': 'Profile updated successfully'}), 200
+
+# ────────────────────────────────
+# RESUME ROUTES
+# ────────────────────────────────
+
+@app.route('/api/resume/upload', methods=['POST'])
+def upload_resume():
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    user_id = verify_token(token)
+    if not user_id:
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    if 'resume' not in request.files:
+        return jsonify({'error': 'No file uploaded'}), 400
+
+    file = request.files['resume']
+    if file.filename == '':
+        return jsonify({'error': 'No file selected'}), 400
+
+    if not file.filename.endswith('.pdf'):
+        return jsonify({'error': 'Only PDF files are allowed'}), 400
+
+    try:
+        import tempfile
+        from resume_parser import extract_text_from_pdf
+        from bson import ObjectId
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp:
+            file.save(tmp.name)
+            text = extract_text_from_pdf(tmp.name)
+
+        users.update_one(
+            {'_id': ObjectId(user_id)},
+            {'$set': {'resume_text': text, 'resume_uploaded': True}}
+        )
+
+        return jsonify({
+            'message': 'Resume uploaded and parsed successfully',
+            'text_length': len(text),
+            'preview': text[:200]
+        }), 200
+
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': 'Failed to parse resume'}), 500
 
 # ────────────────────────────────
 # RUN APP
