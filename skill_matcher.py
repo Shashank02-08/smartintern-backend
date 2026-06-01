@@ -40,7 +40,7 @@ def calculate_match_score(resume_skills, internship_skills):
 
     matched = 0
     for skill in internship_lower:
-        if any(skill == r for r in resume_lower):
+        if any(skill == r or (len(skill) > 4 and skill in r) or (len(r) > 4 and r in skill) for r in resume_lower):
             matched += 1
 
     score = int((matched / len(internship_lower)) * 100)
