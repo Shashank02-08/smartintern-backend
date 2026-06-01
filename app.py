@@ -243,6 +243,39 @@ def upload_resume():
         return jsonify({'error': 'Failed to parse resume'}), 500
 
 # ────────────────────────────────
+# AI MATCHING ROUTES
+# ────────────────────────────────
+
+@app.route('/api/matches', methods=['GET'])
+def get_matches():
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    user_id = verify_token(token)
+    if not user_id:
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    from bson import ObjectId
+    from skill_matcher import match_resume_to_internships
+
+    # Get user
+    user = users.find_one({'_id': ObjectId(user_id)})
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    resume_text = user.get('resume_text', '')
+    if not resume_text:
+        return jsonify({'error': 'No resume uploaded yet'}), 400
+
+    # Get all internships
+    all_internships = list(internships.find())
+    for i in all_internships:
+        i['_id'] = str(i['_id'])
+
+    # Match resume to internships
+    matched = match_resume_to_internships(resume_text, all_internships)
+
+    return jsonify(matched[:10]), 200
+
+# ────────────────────────────────
 # RUN APP
 # ────────────────────────────────
 if __name__ == '__main__':

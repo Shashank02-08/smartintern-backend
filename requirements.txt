@@ -6,3 +6,5 @@ pyjwt
 bcrypt
 dnspython
 PyPDF2
+scikit-learn
+nltk
