@@ -273,7 +273,8 @@ def get_matches():
     # Match resume to internships
     matched = match_resume_to_internships(resume_text, all_internships)
 
-    return jsonify(matched[:10]), 200
+    filtered = [m for m in matched if m['match_score'] >= 60]
+    return jsonify(filtered[:10]), 200
 
 # ────────────────────────────────
 # RUN APP
