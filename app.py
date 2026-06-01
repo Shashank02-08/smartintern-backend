@@ -222,13 +222,26 @@ def upload_resume():
         from resume_parser import extract_text_from_pdf
         from bson import ObjectId
 
+        import os
         with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp:
-            file.save(tmp.name)
-            text = extract_text_from_pdf(tmp.name)
+            tmp_path = tmp.name
+            file.save(tmp_path)
 
+        try:
+            text = extract_text_from_pdf(tmp_path)
+        finally:
+            # Always delete temp file
+            if os.path.exists(tmp_path):
+                os.unlink(tmp_path)
+
+        # Clear old resume text first then save new
         users.update_one(
             {'_id': ObjectId(user_id)},
-            {'$set': {'resume_text': text, 'resume_uploaded': True}}
+            {'$set': {
+                'resume_text': text,
+                'resume_uploaded': True,
+                'resume_updated_at': datetime.utcnow()
+            }}
         )
 
         return jsonify({

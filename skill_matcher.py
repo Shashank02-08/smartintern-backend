@@ -19,7 +19,6 @@ SKILL_KEYWORDS = [
     'android', 'ios', 'flutter', 'react native',
     'figma', 'adobe xd', 'photoshop', 'illustrator', 'ui/ux',
     'excel', 'sql', 'rest api', 'graphql', 'agile', 'scrum',
-    'communication', 'teamwork', 'leadership', 'problem solving'
 ]
 
 
