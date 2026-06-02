@@ -8,3 +8,4 @@ dnspython
 PyPDF2
 scikit-learn
 nltk
+Flask-Mail==0.10.0

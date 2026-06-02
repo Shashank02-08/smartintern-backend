@@ -1,11 +1,13 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flask_mail import Mail, Message
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import os
 import jwt
 import bcrypt
+import random
 
 # ── Load environment variables ──
 load_dotenv()
@@ -14,6 +16,15 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5173", "https://smartintern-ai.vercel.app"])
 
+# ── Flask-Mail Config ──
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
+mail = Mail(app)
+
 # ── Connect to MongoDB ──
 client = MongoClient(os.getenv('MONGO_URI'))
 db = client['smartintern']
@@ -21,6 +32,7 @@ db = client['smartintern']
 # ── Collections ──
 users = db['users']
 internships = db['internships']
+otp_store = db['otp_store']
 
 # ── Helper: Generate JWT Token ──
 def generate_token(user_id):
@@ -42,37 +54,96 @@ def verify_token(token):
 # AUTH ROUTES
 # ────────────────────────────────
 
-# Register
-@app.route('/api/register', methods=['POST'])
-def register():
+# STEP 1: Validate form + send OTP
+@app.route('/api/send-otp', methods=['POST'])
+def send_otp():
     import re
     data = request.json
-    name = data.get('name')
-    email = data.get('email')
-    password = data.get('password')
+    name = data.get('name', '').strip()
+    email = data.get('email', '').strip().lower()
+    password = data.get('password', '')
 
     if not name or not email or not password:
         return jsonify({'error': 'All fields are required'}), 400
 
-    # Email format validation
     email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
     if not re.match(email_regex, email):
         return jsonify({'error': 'Please enter a valid email address'}), 400
 
-    # Password length check
     if len(password) < 6:
         return jsonify({'error': 'Password must be at least 6 characters'}), 400
 
-    # Check if user already exists
     if users.find_one({'email': email}):
         return jsonify({'error': 'Email already registered'}), 400
 
-    # Hash password
-    hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    # Generate 6-digit OTP
+    otp = str(random.randint(100000, 999999))
 
-    # Save user
-    user = {
+    # Store OTP in MongoDB (expires in 10 minutes), clear any old one first
+    otp_store.delete_many({'email': email})
+    otp_store.insert_one({
+        'email': email,
+        'otp': otp,
         'name': name,
+        'password': password,
+        'expires_at': datetime.utcnow() + timedelta(minutes=10)
+    })
+
+    # Send email
+    try:
+        msg = Message(
+            subject='Your SmartIntern AI Verification Code',
+            recipients=[email]
+        )
+        msg.html = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 480px; margin: auto; padding: 32px; border: 1px solid #e5e7eb; border-radius: 12px;">
+          <h2 style="color: #6366f1;">SmartIntern<span style="color:#111">AI</span> 🎓</h2>
+          <p>Hi <strong>{name}</strong>,</p>
+          <p>Use the code below to verify your email address:</p>
+          <div style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #6366f1; text-align: center; margin: 24px 0; padding: 16px; background: #eef2ff; border-radius: 8px;">
+            {otp}
+          </div>
+          <p style="color: #6b7280; font-size: 14px;">This code expires in <strong>10 minutes</strong>. If you didn't request this, ignore this email.</p>
+        </div>
+        """
+        mail.send(msg)
+    except Exception as e:
+        return jsonify({'error': 'Failed to send email. Please try again.'}), 500
+
+    return jsonify({'message': 'OTP sent to your email'}), 200
+
+
+# STEP 2: Verify OTP + create account
+@app.route('/api/verify-otp', methods=['POST'])
+def verify_otp():
+    data = request.json
+    email = data.get('email', '').strip().lower()
+    otp = data.get('otp', '').strip()
+
+    if not email or not otp:
+        return jsonify({'error': 'Email and OTP are required'}), 400
+
+    record = otp_store.find_one({'email': email})
+
+    if not record:
+        return jsonify({'error': 'OTP not found. Please register again.'}), 400
+
+    if datetime.utcnow() > record['expires_at']:
+        otp_store.delete_many({'email': email})
+        return jsonify({'error': 'OTP has expired. Please register again.'}), 400
+
+    if record['otp'] != otp:
+        return jsonify({'error': 'Invalid OTP. Please try again.'}), 400
+
+    # Double-check email not registered while OTP was pending
+    if users.find_one({'email': email}):
+        return jsonify({'error': 'Email already registered'}), 400
+
+    # Hash password and create user — exact same fields as original /api/register
+    hashed = bcrypt.hashpw(record['password'].encode('utf-8'), bcrypt.gensalt())
+
+    user = {
+        'name': record['name'],
         'email': email,
         'password': hashed,
         'college': '',
@@ -82,20 +153,23 @@ def register():
         'bio': '',
         'skills': [],
         'resume': None,
+        'email_verified': True,
         'created_at': datetime.utcnow()
     }
     result = users.insert_one(user)
-    token = generate_token(result.inserted_id)
+    otp_store.delete_many({'email': email})
 
+    token = generate_token(result.inserted_id)
     return jsonify({
         'message': 'Account created successfully',
         'token': token,
         'user': {
             'id': str(result.inserted_id),
-            'name': name,
+            'name': record['name'],
             'email': email
         }
     }), 201
+
 
 # Login
 @app.route('/api/login', methods=['POST'])
@@ -107,17 +181,14 @@ def login():
     if not email or not password:
         return jsonify({'error': 'All fields are required'}), 400
 
-    # Find user
     user = users.find_one({'email': email})
     if not user:
         return jsonify({'error': 'Invalid email or password'}), 401
 
-    # Check password
     if not bcrypt.checkpw(password.encode('utf-8'), user['password']):
         return jsonify({'error': 'Invalid email or password'}), 401
 
     token = generate_token(user['_id'])
-
     return jsonify({
         'message': 'Login successful',
         'token': token,
@@ -132,7 +203,6 @@ def login():
 # INTERNSHIP ROUTES
 # ────────────────────────────────
 
-# Get all internships
 @app.route('/api/internships', methods=['GET'])
 def get_internships():
     query = request.args.get('q', '')
@@ -158,7 +228,6 @@ def get_internships():
 # USER ROUTES
 # ────────────────────────────────
 
-# Get user profile
 @app.route('/api/profile', methods=['GET'])
 def get_profile():
     token = request.headers.get('Authorization', '').replace('Bearer ', '')
@@ -176,7 +245,6 @@ def get_profile():
 
     return jsonify(user), 200
 
-# Update user profile
 @app.route('/api/profile', methods=['PUT'])
 def update_profile():
     token = request.headers.get('Authorization', '').replace('Bearer ', '')
@@ -221,8 +289,8 @@ def upload_resume():
         import tempfile
         from resume_parser import extract_text_from_pdf
         from bson import ObjectId
-
         import os
+
         with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp:
             tmp_path = tmp.name
             file.save(tmp_path)
@@ -230,11 +298,9 @@ def upload_resume():
         try:
             text = extract_text_from_pdf(tmp_path)
         finally:
-            # Always delete temp file
             if os.path.exists(tmp_path):
                 os.unlink(tmp_path)
 
-        # Clear old resume text first then save new
         users.update_one(
             {'_id': ObjectId(user_id)},
             {'$set': {
@@ -269,7 +335,6 @@ def get_matches():
     from bson import ObjectId
     from skill_matcher import match_resume_to_internships
 
-    # Get user
     user = users.find_one({'_id': ObjectId(user_id)})
     if not user:
         return jsonify({'error': 'User not found'}), 404
@@ -278,14 +343,11 @@ def get_matches():
     if not resume_text:
         return jsonify({'error': 'No resume uploaded yet'}), 400
 
-    # Get all internships
     all_internships = list(internships.find())
     for i in all_internships:
         i['_id'] = str(i['_id'])
 
-    # Match resume to internships
     matched = match_resume_to_internships(resume_text, all_internships)
-
     filtered = [m for m in matched if m['match_score'] >= 60]
     return jsonify(filtered[:10]), 200
 
