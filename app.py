@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from flask_mail import Mail, Message
 from pymongo import MongoClient
@@ -33,6 +33,10 @@ db = client['smartintern']
 users = db['users']
 internships = db['internships']
 otp_store = db['otp_store']
+
+# ── Uploads folder ──
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ── Helper: Generate JWT Token ──
 def generate_token(user_id):
@@ -76,10 +80,8 @@ def send_otp():
     if users.find_one({'email': email}):
         return jsonify({'error': 'Email already registered'}), 400
 
-    # Generate 6-digit OTP
     otp = str(random.randint(100000, 999999))
 
-    # Store OTP in MongoDB (expires in 10 minutes), clear any old one first
     otp_store.delete_many({'email': email})
     otp_store.insert_one({
         'email': email,
@@ -89,7 +91,6 @@ def send_otp():
         'expires_at': datetime.utcnow() + timedelta(minutes=10)
     })
 
-    # Send email
     try:
         msg = Message(
             subject='Your SmartIntern AI Verification Code',
@@ -135,11 +136,9 @@ def verify_otp():
     if record['otp'] != otp:
         return jsonify({'error': 'Invalid OTP. Please try again.'}), 400
 
-    # Double-check email not registered while OTP was pending
     if users.find_one({'email': email}):
         return jsonify({'error': 'Email already registered'}), 400
 
-    # Hash password and create user — exact same fields as original /api/register
     hashed = bcrypt.hashpw(record['password'].encode('utf-8'), bcrypt.gensalt())
 
     user = {
@@ -153,6 +152,7 @@ def verify_otp():
         'bio': '',
         'skills': [],
         'resume': None,
+        'resume_filename': None,
         'email_verified': True,
         'created_at': datetime.utcnow()
     }
@@ -286,25 +286,28 @@ def upload_resume():
         return jsonify({'error': 'Only PDF files are allowed'}), 400
 
     try:
-        import tempfile
         from resume_parser import extract_text_from_pdf
         from bson import ObjectId
-        import os
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp:
-            tmp_path = tmp.name
-            file.save(tmp_path)
+        # ── Save PDF permanently (named by user_id so it overwrites on re-upload) ──
+        filename = f"{user_id}.pdf"
+        save_path = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(save_path)
 
+        # ── Extract text from saved file ──
         try:
-            text = extract_text_from_pdf(tmp_path)
-        finally:
-            if os.path.exists(tmp_path):
-                os.unlink(tmp_path)
+            text = extract_text_from_pdf(save_path)
+        except Exception:
+            # Remove bad file if parsing fails
+            if os.path.exists(save_path):
+                os.unlink(save_path)
+            raise
 
         users.update_one(
             {'_id': ObjectId(user_id)},
             {'$set': {
                 'resume_text': text,
+                'resume_filename': filename,
                 'resume_uploaded': True,
                 'resume_updated_at': datetime.utcnow()
             }}
@@ -320,6 +323,32 @@ def upload_resume():
         return jsonify({'error': str(e)}), 400
     except Exception as e:
         return jsonify({'error': 'Failed to parse resume'}), 500
+
+
+# ── NEW: Serve the stored PDF file ──
+@app.route('/api/resume/file', methods=['GET'])
+def get_resume_file():
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    user_id = verify_token(token)
+    if not user_id:
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    from bson import ObjectId
+    user = users.find_one({'_id': ObjectId(user_id)})
+    if not user or not user.get('resume_filename'):
+        return jsonify({'error': 'No resume found'}), 404
+
+    file_path = os.path.join(UPLOAD_FOLDER, user['resume_filename'])
+    if not os.path.exists(file_path):
+        return jsonify({'error': 'Resume file not found on server'}), 404
+
+    return send_file(
+        file_path,
+        mimetype='application/pdf',
+        as_attachment=False,         # inline view in browser
+        download_name='resume.pdf'
+    )
+
 
 # ────────────────────────────────
 # AI MATCHING ROUTES
