@@ -171,6 +171,96 @@ def verify_otp():
         }
     }), 201
 
+# Forgot Password Step 1: Send OTP
+@app.route('/api/forgot-password', methods=['POST'])
+def forgot_password():
+    import re
+    data = request.json
+    email = data.get('email', '').strip().lower()
+
+    if not email:
+        return jsonify({'error': 'Email is required'}), 400
+
+    email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+    if not re.match(email_regex, email):
+        return jsonify({'error': 'Please enter a valid email address'}), 400
+
+    if not users.find_one({'email': email}):
+        return jsonify({'error': 'No account found with this email'}), 404
+
+    otp = str(random.randint(100000, 999999))
+    otp_store.delete_many({'email': email, 'type': 'reset'})
+    otp_store.insert_one({
+        'email': email,
+        'otp': otp,
+        'type': 'reset',
+        'expires_at': datetime.utcnow() + timedelta(minutes=10)
+    })
+
+    try:
+        response = http_requests.post(
+            'https://api.brevo.com/v3/smtp/email',
+            headers={
+                'api-key': os.getenv('BREVO_API_KEY'),
+                'Content-Type': 'application/json'
+            },
+            json={
+                'sender': {'name': 'SmartIntern AI', 'email': os.getenv('MAIL_USERNAME')},
+                'to': [{'email': email}],
+                'subject': 'Reset Your SmartIntern AI Password',
+                'htmlContent': f"""
+                <div style="font-family: Arial, sans-serif; max-width: 480px; margin: auto; padding: 32px; border: 1px solid #e5e7eb; border-radius: 12px;">
+                  <h2 style="color: #6366f1;">SmartIntern<span style="color:#111">AI</span> 🔐</h2>
+                  <p>We received a request to reset your password.</p>
+                  <p>Use the code below to reset it:</p>
+                  <div style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #6366f1; text-align: center; margin: 24px 0; padding: 16px; background: #eef2ff; border-radius: 8px;">
+                    {otp}
+                  </div>
+                  <p style="color: #6b7280; font-size: 14px;">This code expires in <strong>10 minutes</strong>. If you didn't request this, ignore this email.</p>
+                </div>
+                """
+            }
+        )
+        if response.status_code not in (200, 201):
+            return jsonify({'error': 'Failed to send email. Please try again.'}), 500
+    except Exception as e:
+        return jsonify({'error': 'Failed to send email. Please try again.'}), 500
+
+    return jsonify({'message': 'OTP sent to your email'}), 200
+
+
+# Forgot Password Step 2: Verify OTP + Reset Password
+@app.route('/api/reset-password', methods=['POST'])
+def reset_password():
+    data = request.json
+    email = data.get('email', '').strip().lower()
+    otp = data.get('otp', '').strip()
+    new_password = data.get('new_password', '')
+
+    if not email or not otp or not new_password:
+        return jsonify({'error': 'All fields are required'}), 400
+
+    if len(new_password) < 6:
+        return jsonify({'error': 'Password must be at least 6 characters'}), 400
+
+    record = otp_store.find_one({'email': email, 'type': 'reset'})
+
+    if not record:
+        return jsonify({'error': 'OTP not found. Please try again.'}), 400
+
+    if datetime.utcnow() > record['expires_at']:
+        otp_store.delete_many({'email': email, 'type': 'reset'})
+        return jsonify({'error': 'OTP has expired. Please try again.'}), 400
+
+    if record['otp'] != otp:
+        return jsonify({'error': 'Invalid OTP. Please try again.'}), 400
+
+    hashed = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())
+    users.update_one({'email': email}, {'$set': {'password': hashed}})
+    otp_store.delete_many({'email': email, 'type': 'reset'})
+
+    return jsonify({'message': 'Password reset successfully'}), 200
+
 
 # Login
 @app.route('/api/login', methods=['POST'])
