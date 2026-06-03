@@ -228,6 +228,29 @@ def forgot_password():
 
     return jsonify({'message': 'OTP sent to your email'}), 200
 
+# Forgot Password Step 1.5: Verify OTP only (don't delete yet)
+@app.route('/api/verify-reset-otp', methods=['POST'])
+def verify_reset_otp():
+    data = request.json
+    email = data.get('email', '').strip().lower()
+    otp = data.get('otp', '').strip()
+
+    if not email or not otp:
+        return jsonify({'error': 'Email and OTP are required'}), 400
+
+    record = otp_store.find_one({'email': email, 'type': 'reset'})
+
+    if not record:
+        return jsonify({'error': 'OTP not found. Please try again.'}), 400
+
+    if datetime.utcnow() > record['expires_at']:
+        otp_store.delete_many({'email': email, 'type': 'reset'})
+        return jsonify({'error': 'OTP has expired. Please try again.'}), 400
+
+    if record['otp'] != otp:
+        return jsonify({'error': 'Invalid OTP. Please try again.'}), 400
+
+    return jsonify({'message': 'OTP verified'}), 200
 
 # Forgot Password Step 2: Verify OTP + Reset Password
 @app.route('/api/reset-password', methods=['POST'])
