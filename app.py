@@ -109,7 +109,7 @@ def send_otp():
         """
         mail.send(msg)
     except Exception as e:
-        return jsonify({'error': 'Failed to send email. Please try again.'}), 500
+        return jsonify({'error': f'Email error: {str(e)}'}), 500
 
     return jsonify({'message': 'OTP sent to your email'}), 200
 
