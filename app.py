@@ -110,7 +110,7 @@ def send_otp():
         if response.status_code not in (200, 201):
             return jsonify({'error': f'Email error: {response.text}'}), 500
     except Exception as e:
-        return jsonify({'error': f'Email error: {str(e)}'}), 500
+         return jsonify({'error': 'Failed to send email. Please try again.'}), 500
 
     return jsonify({'message': 'OTP sent to your email'}), 200
 
@@ -287,28 +287,30 @@ def upload_resume():
         return jsonify({'error': 'Only PDF files are allowed'}), 400
 
     try:
+        import tempfile, base64
         from resume_parser import extract_text_from_pdf
         from bson import ObjectId
 
-        # ── Save PDF permanently (named by user_id so it overwrites on re-upload) ──
-        filename = f"{user_id}.pdf"
-        save_path = os.path.join(UPLOAD_FOLDER, filename)
-        file.save(save_path)
+        # Save temp file for parsing
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp:
+            tmp_path = tmp.name
+            file.save(tmp_path)
 
-        # ── Extract text from saved file ──
         try:
-            text = extract_text_from_pdf(save_path)
-        except Exception:
-            # Remove bad file if parsing fails
-            if os.path.exists(save_path):
-                os.unlink(save_path)
-            raise
+            text = extract_text_from_pdf(tmp_path)
+            # Read raw bytes and encode as base64 for MongoDB storage
+            with open(tmp_path, 'rb') as f:
+                pdf_base64 = base64.b64encode(f.read()).decode('utf-8')
+        finally:
+            if os.path.exists(tmp_path):
+                os.unlink(tmp_path)
 
         users.update_one(
             {'_id': ObjectId(user_id)},
             {'$set': {
                 'resume_text': text,
-                'resume_filename': filename,
+                'resume_pdf': pdf_base64,       # stored in MongoDB
+                'resume_filename': file.filename,
                 'resume_uploaded': True,
                 'resume_updated_at': datetime.utcnow()
             }}
@@ -326,7 +328,6 @@ def upload_resume():
         return jsonify({'error': 'Failed to parse resume'}), 500
 
 
-# ── NEW: Serve the stored PDF file ──
 @app.route('/api/resume/file', methods=['GET'])
 def get_resume_file():
     token = request.headers.get('Authorization', '').replace('Bearer ', '')
@@ -334,20 +335,19 @@ def get_resume_file():
     if not user_id:
         return jsonify({'error': 'Unauthorized'}), 401
 
+    import base64
     from bson import ObjectId
+    from flask import Response
+
     user = users.find_one({'_id': ObjectId(user_id)})
-    if not user or not user.get('resume_filename'):
+    if not user or not user.get('resume_pdf'):
         return jsonify({'error': 'No resume found'}), 404
 
-    file_path = os.path.join(UPLOAD_FOLDER, user['resume_filename'])
-    if not os.path.exists(file_path):
-        return jsonify({'error': 'Resume file not found on server'}), 404
-
-    return send_file(
-        file_path,
+    pdf_bytes = base64.b64decode(user['resume_pdf'])
+    return Response(
+        pdf_bytes,
         mimetype='application/pdf',
-        as_attachment=False,         # inline view in browser
-        download_name='resume.pdf'
+        headers={'Content-Disposition': 'inline; filename=resume.pdf'}
     )
 
 
