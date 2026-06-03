@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
-from flask_mail import Mail, Message
+import requests as http_requests
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
@@ -16,14 +16,6 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5173", "https://smartintern-ai.vercel.app"])
 
-# ── Flask-Mail Config ──
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
-app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
-mail = Mail(app)
 
 # ── Connect to MongoDB ──
 client = MongoClient(os.getenv('MONGO_URI'))
@@ -92,22 +84,31 @@ def send_otp():
     })
 
     try:
-        msg = Message(
-            subject='Your SmartIntern AI Verification Code',
-            recipients=[email]
+        response = http_requests.post(
+            'https://api.brevo.com/v3/smtp/email',
+            headers={
+                'api-key': os.getenv('BREVO_API_KEY'),
+                'Content-Type': 'application/json'
+            },
+            json={
+                'sender': {'name': 'SmartIntern AI', 'email': os.getenv('MAIL_USERNAME')},
+                'to': [{'email': email, 'name': name}],
+                'subject': 'Your SmartIntern AI Verification Code',
+                'htmlContent': f"""
+                <div style="font-family: Arial, sans-serif; max-width: 480px; margin: auto; padding: 32px; border: 1px solid #e5e7eb; border-radius: 12px;">
+                  <h2 style="color: #6366f1;">SmartIntern<span style="color:#111">AI</span> 🎓</h2>
+                  <p>Hi <strong>{name}</strong>,</p>
+                  <p>Use the code below to verify your email address:</p>
+                  <div style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #6366f1; text-align: center; margin: 24px 0; padding: 16px; background: #eef2ff; border-radius: 8px;">
+                    {otp}
+                  </div>
+                  <p style="color: #6b7280; font-size: 14px;">This code expires in <strong>10 minutes</strong>. If you didn't request this, ignore this email.</p>
+                </div>
+                """
+            }
         )
-        msg.html = f"""
-        <div style="font-family: Arial, sans-serif; max-width: 480px; margin: auto; padding: 32px; border: 1px solid #e5e7eb; border-radius: 12px;">
-          <h2 style="color: #6366f1;">SmartIntern<span style="color:#111">AI</span> 🎓</h2>
-          <p>Hi <strong>{name}</strong>,</p>
-          <p>Use the code below to verify your email address:</p>
-          <div style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #6366f1; text-align: center; margin: 24px 0; padding: 16px; background: #eef2ff; border-radius: 8px;">
-            {otp}
-          </div>
-          <p style="color: #6b7280; font-size: 14px;">This code expires in <strong>10 minutes</strong>. If you didn't request this, ignore this email.</p>
-        </div>
-        """
-        mail.send(msg)
+        if response.status_code not in (200, 201):
+            return jsonify({'error': f'Email error: {response.text}'}), 500
     except Exception as e:
         return jsonify({'error': f'Email error: {str(e)}'}), 500
 
