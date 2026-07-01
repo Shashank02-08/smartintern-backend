@@ -379,6 +379,46 @@ def update_profile():
     return jsonify({'message': 'Profile updated successfully'}), 200
 
 # ────────────────────────────────
+# PROFILE PHOTO ROUTES
+# ────────────────────────────────
+
+@app.route('/api/profile/photo', methods=['POST'])
+def upload_photo():
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    user_id = verify_token(token)
+    if not user_id:
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    if 'photo' not in request.files:
+        return jsonify({'error': 'No file uploaded'}), 400
+
+    file = request.files['photo']
+    if file.filename == '':
+        return jsonify({'error': 'No file selected'}), 400
+
+    allowed_ext = ('.png', '.jpg', '.jpeg', '.gif', '.webp')
+    if not file.filename.lower().endswith(allowed_ext):
+        return jsonify({'error': 'Only image files are allowed (png, jpg, jpeg, gif, webp)'}), 400
+
+    file_bytes = file.read()
+    if len(file_bytes) > 2 * 1024 * 1024:  # 2MB limit
+        return jsonify({'error': 'Image must be under 2MB'}), 400
+
+    import base64
+    from bson import ObjectId
+
+    mime_type = file.mimetype or 'image/jpeg'
+    photo_base64 = base64.b64encode(file_bytes).decode('utf-8')
+    photo_data_uri = f'data:{mime_type};base64,{photo_base64}'
+
+    users.update_one(
+        {'_id': ObjectId(user_id)},
+        {'$set': {'photo': photo_data_uri}}
+    )
+
+    return jsonify({'message': 'Photo uploaded successfully', 'photo': photo_data_uri}), 200
+
+# ────────────────────────────────
 # RESUME ROUTES
 # ────────────────────────────────
 
